@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}Posts - LITReview{% endblock %}
+
+{% block content %}
+    <div class="container mt-4">
+        <h2>Vos posts</h2>
+        
+        {% if tickets %}
+            <div class="row">
+                {% for ticket in tickets %}
+                    <div class="col-md-6 col-lg-4 mb-4">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ ticket.title }}</h5>
+                                <p class="card-text">{{ ticket.description }}</p>
+                                <p class="card-text"><small>Créé le : {{ ticket.time_created|date:"H:i, j F Y" }}</small></p>
+                                <p class="card-text"><small>Posté par : {{ ticket.user.username }}</small></p>
+                                <button class="btn btn-secondary" onclick="window.location.href='{% url 'create_review' ticket.id %}'">Créer une critique</button>
+                                <a href="{% url 'edit_ticket' ticket.id %}" class="btn btn-warning">Modifier</a>
+                                <a href="{% url 'delete_ticket' ticket.id %}" class="btn btn-danger">Supprimer</a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p>Aucun ticket trouvé.</p>
+        {% endif %}
+    </div>
+{% endblock %}

@@ -1,0 +1,20 @@
+<!-- ticket_snippet.html -->
+{% load static %}
+
+<div class="card h-100">
+    <div class="card-body">
+        <h5 class="card-title">Ticket - {{ post.user.username }}</h5>
+        <h6 class="card-subtitle mb-2 text-muted"><strong>{{ post.title }}</strong></h6>
+        <p class="card-text">{{ post.description }}</p>
+        <p class="card-text"><small>Posté par : {{ post.user.username }}</small></p>
+        <p class="card-text"><small>Créé le : {{ post.time_created|date:"H:i, j F Y" }}</small></p>
+        
+        {% if post.image %}
+            <img src="{{ post.image.url }}" class="card-img-top" alt="Image du ticket">
+        {% else %}
+            <img src="{% static 'default_image.png' %}" class="card-img-top" alt="Image par défaut">
+        {% endif %}
+
+        <button class="btn btn-secondary" onclick="window.location.href='{% url 'create_review' post.id %}'">Créer une critique</button>
+    </div>
+</div>

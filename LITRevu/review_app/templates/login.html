@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+
+{% block title %}Connexion - LITReview{% endblock %}
+
+{% block content %}
+    <div class="centered-content">
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Connexion</button>
+            <div style="margin-top: 10px;">
+                <p>Pas de compte ? <a href="{% url 'signup' %}">S'inscrire</a></p>
+            </div>
+        </form>
+    </div>
+{% endblock %}

@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+
+{% block title %}Inscription - LITReview{% endblock %}
+
+{% block content %}
+    <div class="centered-content">
+        <form method="post">
+            {% csrf_token %}
+            <div>
+                <label for="id_username">Nom d'utilisateur :</label>
+                {{ form.username }}
+            </div>
+            <div>
+                <label for="id_password1">Mot de passe :</label>
+                {{ form.password1 }}
+            </div>
+            <div>
+                <label for="id_password2">Confirmation du mot de passe :</label>
+                {{ form.password2 }}
+            </div>
+            <button style="margin-top: 15px;">
+                <a href="{% url 'feed' %}" class="button">
+                    Retour
+                </a>
+            </button>
+            <button type="submit">S'inscrire</button>
+            <div style="margin-top: 10px;">
+                <p>Déjà un compte ? <a href="{% url 'login' %}">Se connecter</a></p>
+            </div>
+        </form>
+    </div>
+{% endblock %}

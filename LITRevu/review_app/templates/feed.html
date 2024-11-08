@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block title %}Flux - LITReview{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="text-center mb-4">
+        <button type="button" class="btn btn-secondary" onclick="window.location.href='{% url 'request_review' %}'">Demander une critique</button>
+        <button type="button" class="btn btn-secondary" onclick="window.location.href='{% url 'create_ticket_and_review' %}'">Créer une critique</button>
+    </div>
+
+    <div class="row">
+        {% for post in posts %}
+            <div class="col-md-6 col-lg-4 mb-4">
+                {% if post.content_type == 'TICKET' %}
+                    {% include 'ticket_snippet.html' %}
+                {% elif post.content_type == 'REVIEW' %}
+                    {% include 'review_snippet.html' %}
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

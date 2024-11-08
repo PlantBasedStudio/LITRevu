@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}Vos abonnements - LITReview{% endblock %}
+
+{% block content %}
+    <h2>Suivre d'autres utilisateurs</h2>
+
+    <form method="post">
+        {% csrf_token %}
+        <input type="text" name="username" placeholder="Nom d'utilisateur à suivre" required>
+        <button type="submit">Suivre</button>
+    </form>
+
+    <h2>Abonnements</h2>
+    <ul>
+        {% for follow in followed_users %}
+            <li>
+                {{ follow.followed_user.username }}
+                <form method="post" action="{% url 'unfollow_user' follow.followed_user.id %}">
+                    {% csrf_token %}
+                    <button type="submit">Ne plus suivre</button>
+                </form>
+            </li>
+        {% empty %}
+            <li>Aucun abonnement.</li>
+        {% endfor %}
+    </ul>
+{% endblock %}

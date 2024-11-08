@@ -1,0 +1,33 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}LITReview{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <header class="header">
+        <h1><a href="{% url 'feed' %}">LITReview</a></h1>
+        <nav>
+            <ul>
+                <li><a href="{% url 'feed' %}">Flux</a></li>
+                <li><a href="{% url 'tickets' %}">Posts</a></li>
+                <li><a href="{% url 'manage_follows' %}">Abonnements</a></li>
+                {% if user.is_authenticated %}
+                    <li><a href="{% url 'logout' %}">Se déconnecter</a></li>
+                {% else %}
+                    <li><a href="{% url 'login' %}">Connexion</a></li>
+                    <li><a href="{% url 'signup' %}">Inscription</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+</body>
+</html>

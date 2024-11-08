@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %}Créer un Billet et une Critique - LITReview{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Créer un Billet et une Critique</h2>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        <h3>Billet</h3>
+        {{ ticket_form.as_p }}
+        
+        <h3>Critique</h3>
+        {{ review_form.as_p }}
+        
+        <button type="submit" class="btn btn-primary">Publier</button>
+    </form>
+</div>
+{% endblock %}
