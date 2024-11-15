@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block title %}Modifier la critique{% endblock %}
+
+{% block content %}
+    <div class="container mt-4">
+        <h2>Modifier la critique</h2>
+
+        <form method="POST">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-primary">Modifier</button>
+        </form>
+
+        <a href="{% url 'feed' %}" class="btn btn-secondary mt-3">Retour au feed</a>
+    </div>
+{% endblock %}

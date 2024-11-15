@@ -1,10 +1,56 @@
-{% extends "base.html" %}
-
-
-{% block title %}Création d'une review - LITReview{% endblock %}
+{% extends 'base.html' %}
 
 {% block content %}
+<div class="container my-4">
+    <!-- Titre principal -->
+    <h2 class="text-center mb-4">Créer une critique</h2>
 
+    <!-- Colonne principale contenant le billet -->
+    <div class="row">
+        <!-- Bloc du billet non modifiable -->
+        <div class="col-md-8 offset-md-2">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">{{ ticket.user.username }} a demandé une critique</h5>
+                    <p class="card-text"><strong>Vous êtes en train de poster en réponse à :</strong></p>
 
+                    <p class="card-text">{{ ticket.title }}</p>
+                    <p class="card-text">{{ ticket.description }}</p>
+                    {% if ticket.image %}
+                        <img src="{{ ticket.image.url }}" class="img-fluid rounded" alt="Image du ticket">
+                    {% endif %}
+                    <p class="card-text"><small class="text-muted">Créé le : {{ ticket.time_created|date:"H:i, j F Y" }}</small></p>
+                </div>
+            </div>
 
+            <!-- Formulaire de critique -->
+            <div class="card">
+                <div class="card-body">
+                    <h6 class="card-title">Ajouter votre critique</h6>
+
+                    <form method="POST">
+                        {% csrf_token %}
+                        
+                        <div class="form-group">
+                            <label for="id_headline">Titre de la critique</label>
+                            {{ form.headline }}
+                        </div>
+
+                        <div class="form-group">
+                            <label for="id_rating">Note</label>
+                            {{ form.rating }}
+                        </div>
+
+                        <div class="form-group">
+                            <label for="id_body">Critique</label>
+                            {{ form.body }}
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Envoyer</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

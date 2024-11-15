@@ -39,12 +39,22 @@ def logout_view(request):
 
 @login_required
 def tickets(request):
-    return render(request, 'tickets.html', context={'tickets': Ticket.objects.filter(user=request.user)})
+    tickets = Ticket.objects.filter(user=request.user)
+
+    tickets_with_reviews = []
+    for ticket in tickets:
+        reviews = ticket.review_set.filter(user=request.user)
+        tickets_with_reviews.append({'ticket': ticket, 'reviews': reviews})
+
+    return render(request, 'tickets.html', context={'tickets_with_reviews': tickets_with_reviews})
+
+
 
 def get_users_viewable_tickets(user):
     tickets_from_user_and_followed = Ticket.objects.filter(
         Q(user=user) | Q(user__in=user.following.all())
     )
+    posts = sorted(posts, key=lambda post: post.time_created, reverse=True)
     return tickets_from_user_and_followed
 
 def get_users_viewable_reviews(user):
@@ -57,20 +67,17 @@ def get_users_viewable_reviews(user):
 def feed(request):
     user = request.user
     followed_users = UserFollows.objects.filter(user=user).values_list('followed_user', flat=True)
-    
-    followed_reviews = Review.objects.filter(user__in=followed_users).annotate(content_type=Value('REVIEW', CharField()))
     followed_tickets = Ticket.objects.filter(user__in=followed_users).annotate(content_type=Value('TICKET', CharField()))
+    followed_reviews = Review.objects.filter(user__in=followed_users).exclude(ticket=None).annotate(content_type=Value('REVIEW', CharField()))
     
-    user_reviews = Review.objects.filter(user=user).annotate(content_type=Value('REVIEW', CharField()))
+    user_reviews = Review.objects.filter(user=user).exclude(ticket=None).annotate(content_type=Value('REVIEW', CharField()))
     user_tickets = Ticket.objects.filter(user=user).annotate(content_type=Value('TICKET', CharField()))
-    
     responses_to_user_tickets = Review.objects.filter(ticket__user=user).exclude(user=user).annotate(content_type=Value('REVIEW', CharField()))
+    user_tickets_with_reviews = Ticket.objects.filter(review__user=user)
+    non_followed_tickets_with_reviews = Ticket.objects.filter(review__user__in=followed_users).exclude(user__in=followed_users).annotate(content_type=Value('TICKET', CharField()))
     
-    posts = sorted(
-        chain(followed_reviews, followed_tickets, user_reviews, user_tickets, responses_to_user_tickets),
-        key=lambda post: post.time_created,
-        reverse=True
-    )
+    posts = list(chain(followed_reviews, followed_tickets, user_reviews, user_tickets, responses_to_user_tickets, user_tickets_with_reviews,  non_followed_tickets_with_reviews))
+    posts = sorted(posts, key=lambda post: post.time_created, reverse=True)
     
     return render(request, 'feed.html', context={'posts': posts})
 
@@ -90,17 +97,49 @@ def create_ticket(request):
 @login_required
 def create_review(request, ticket_id):
     ticket = get_object_or_404(Ticket, id=ticket_id)
+
     if request.method == 'POST':
         form = ReviewForm(request.POST)
         if form.is_valid():
             review = form.save(commit=False)
-            review.user = request.user
             review.ticket = ticket
+            review.user = request.user
             review.save()
-            return redirect('feed')
+            return redirect('feed') 
     else:
-        form = ReviewForm(initial={'ticket': ticket})
-    return render(request, 'create_review.html', {'form': form, 'ticket': ticket})
+        form = ReviewForm()
+
+    return render(request, 'create_review.html', {
+        'ticket': ticket,
+        'form': form
+    })
+    
+    
+@login_required
+def edit_review(request, review_id):
+    review = get_object_or_404(Review, id=review_id, user=request.user)
+    if request.method == 'POST':
+        form = ReviewForm(request.POST, instance=review)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "La critique a été modifiée avec succès.")
+            return redirect('feed') 
+    else:
+        form = ReviewForm(instance=review)
+
+    return render(request, 'edit_review.html', {'form': form, 'review': review})
+
+@login_required
+def delete_review(request, review_id):
+    review = get_object_or_404(Review, id=review_id, user=request.user)
+    
+    if request.method == 'POST':
+        review.delete()
+        messages.success(request, "La critique a été supprimée avec succès.")
+        return redirect('tickets')
+
+    return render(request, 'delete_review.html', {'review': review})
+
 
 @login_required
 def create_ticket_and_review(request):
@@ -193,3 +232,8 @@ def delete_ticket(request, ticket_id):
         messages.success(request, "Le ticket a été supprimé avec succès.")
         return redirect('tickets')
     return render(request, 'delete_ticket.html', {'ticket': ticket})
+
+def ticket_detail(request, ticket_id):
+    ticket = get_object_or_404(Ticket, id=ticket_id)
+    return render(request, 'ticket_detail.html', {'ticket': ticket})
+

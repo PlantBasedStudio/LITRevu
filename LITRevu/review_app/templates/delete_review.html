@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %}Supprimer la critique{% endblock %}
+
+{% block content %}
+    <div class="container mt-4">
+        <h2>Supprimer la critique</h2>
+
+        <p>Êtes-vous sûr de vouloir supprimer cette critique ?</p>
+        <p><strong>{{ review.headline }}</strong></p>
+        <p>{{ review.body }}</p>
+
+        <form method="POST">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">Supprimer</button>
+        </form>
+
+        <a href="{% url 'feed' %}" class="btn btn-secondary mt-3">Retour au feed</a>
+    </div>
+{% endblock %}

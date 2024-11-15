@@ -1,6 +1,3 @@
-<!-- ticket_snippet.html -->
-{% load static %}
-
 <div class="card h-100">
     <div class="card-body">
         <h5 class="card-title">Ticket - {{ post.user.username }}</h5>
@@ -10,9 +7,7 @@
         <p class="card-text"><small>Créé le : {{ post.time_created|date:"H:i, j F Y" }}</small></p>
         
         {% if post.image %}
-            <img src="{{ post.image.url }}" class="card-img-top" alt="Image du ticket">
-        {% else %}
-            <img src="{% static 'default_image.png' %}" class="card-img-top" alt="Image par défaut">
+            <img src="{{ post.image.url }}" class=" img-fluid card-img-top" style="max-width: 150px;" alt="Image du ticket">
         {% endif %}
 
         <button class="btn btn-secondary" onclick="window.location.href='{% url 'create_review' post.id %}'">Créer une critique</button>
