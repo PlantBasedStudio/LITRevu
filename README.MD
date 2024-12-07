@@ -30,7 +30,7 @@ Un gestionnaire de critiques et de tickets interactifs développé avec Django.
 #### **1. Clonez le dépôt / Clone the repository**
 
 ```
-git clone https://github.com/votre-utilisateur/LITRevu.git
+git clone https://github.com/PlantBasedStudio/LITRevu.git
 cd LITRevu
 ```
 
