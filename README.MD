@@ -70,3 +70,8 @@ python manage.py runserver
 ```
 
 Accédez à l'application sur http://127.0.0.1:8000.
+
+
+#### Comment tester / How to try
+Admin : admin / admin
+user : user / useruser

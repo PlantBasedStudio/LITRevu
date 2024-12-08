@@ -3,23 +3,25 @@ from django.db.models import CharField, Value, Q
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import Ticket, Review, UserFollows
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth import login, logout, authenticate
+from django.contrib.auth import login, logout
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
-from django.shortcuts import render, redirect
 from .forms import TicketForm, ReviewForm
 from django.contrib import messages
-from django.contrib.auth.models import User
 from review_app.models import CustomUser
+from .forms import CustomUserCreationForm
 
 def signup_view(request):
     if request.method == 'POST':
-        form = UserCreationForm(request.POST)
+        print("Formulaire reçu")
+        form = CustomUserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
             login(request, user)
             return redirect('feed')
+        else:
+            print(form.errors)
     else:
-        form = UserCreationForm()
+        form = CustomUserCreationForm()
     return render(request, 'register.html', {'form': form})
 
 def login_view(request):
@@ -188,8 +190,11 @@ def manage_follows(request):
         username_to_follow = request.POST.get('username')
         try:
             user_to_follow = CustomUser.objects.get(username=username_to_follow)
-            UserFollows.objects.get_or_create(user=request.user, followed_user=user_to_follow)
-            messages.success(request, f"Vous suivez maintenant {username_to_follow}.")
+            if user_to_follow == request.user:
+                messages.error(request, "Vous ne pouvez pas vous abonner à vous-même.")
+            else :
+                UserFollows.objects.get_or_create(user=request.user, followed_user=user_to_follow)
+                messages.success(request, f"Vous suivez maintenant {username_to_follow}.")
         except CustomUser.DoesNotExist:
             messages.error(request, f"Utilisateur {username_to_follow} introuvable.")
 
