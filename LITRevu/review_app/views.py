@@ -12,14 +12,11 @@ from .forms import CustomUserCreationForm
 
 def signup_view(request):
     if request.method == 'POST':
-        print("Formulaire reçu")
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
             login(request, user)
             return redirect('feed')
-        else:
-            print(form.errors)
     else:
         form = CustomUserCreationForm()
     return render(request, 'register.html', {'form': form})
